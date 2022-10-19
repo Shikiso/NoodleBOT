@@ -1,13 +1,14 @@
 class User(object):
 
-    def __init__(self, Money, Items, Effects, Debts, Ownerships):
+    def __init__(self, DiscordID, Money, Items, Effects, Debts, Ownerships):
+        self.DiscordID = DiscordID
         self.Money = Money
         self.Items = Items
         self.Effects = Effects
         self.Debts = Debts
         self.Ownerships = Ownerships
         
-        self.user_info = (self.Money, self.Items, self.Effects, self.Debts, self.Ownerships)
+        self.user_info = (self.DiscordID, self.Money, self.Items, self.Effects, self.Debts, self.Ownerships)
     
     def add_money(self, amount):
         self.Money += amount

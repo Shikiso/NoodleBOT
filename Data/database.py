@@ -10,13 +10,13 @@ class database(object):
             self.conn = conn
         except Error as e:
             print("Error __init__", e)
-        finally:
             if conn:
                 conn.close()
     
     def execute_table_sql(self, sql):
         try:
             self.c.execute(sql)
+            self.conn.commit()
         except Error as e:
             print(e)
     
@@ -34,8 +34,17 @@ class database(object):
         self.execute_table_sql(sql)
 
     def add_user_to_database(self, user_info):
-        sql = """INSERT INTO users (discord_id, money, items, effects, debts, ownerships) VALUES (?,?,?,?,?)"""
+        sql = """INSERT INTO users (discord_id, money, items, effects, debts, ownerships) VALUES (?,?,?,?,?,?)"""
 
         self.c.execute(sql, user_info)
         self.conn.commit()
+    
+    def user_exists_in_database(self, discord_id):
+        sql = f"""SELECT * FROM users WHERE discord_id={discord_id}"""
+
+        self.c.execute(sql)
+        data_found = self.c.fetchall()
+        if data_found != []:
+            return data_found
+        return False
 
