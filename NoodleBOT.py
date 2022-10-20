@@ -10,6 +10,9 @@ intents = discord.Intents.all()
 intents.message_content = True
 bot = commands.Bot(command_prefix='?', intents=intents)
 
+from Data.database import database
+database().update_item_information(1, ('Name2', 15, 1, 1))
+
 @bot.event
 async def on_ready():
     for cog in listdir("./cogs"):
