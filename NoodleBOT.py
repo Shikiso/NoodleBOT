@@ -3,6 +3,7 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 from os import getenv, listdir
+import bin.setup # sets up database and other functionality
 
 load_dotenv()
 
@@ -10,11 +11,9 @@ intents = discord.Intents.all()
 intents.message_content = True
 bot = commands.Bot(command_prefix='?', intents=intents)
 
-from Data.database import database
-database().update_item_information(1, ('Name2', 15, 1, 1))
-
 @bot.event
 async def on_ready():
+    print("[+] NoodleBOT is ready!")
     for cog in listdir("./cogs"):
         if cog.endswith(".py"):
             try:

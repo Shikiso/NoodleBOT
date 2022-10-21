@@ -14,7 +14,9 @@
 # ----------------------------------------------------------------
 # To Do
 
-- Create items
+> Create items
+- Create Inventory
+- Create buy, sell, etc commands
 - Create price alteration based on demand
 - Create website
 - Create crates

@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from Local_Vars.variables import db
+from bin.variables import db
 from User.User import User
 
 class server_cog(commands.Cog):

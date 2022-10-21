@@ -73,12 +73,11 @@ class database(object):
         self.c.execute(sql)
         data_found = self.c.fetchall()
         if data_found != []:
-            return data_found
+            return data_found[0]
         return False
     
     def update_item_information(self, id, info):
         sql = f"""UPDATE items SET name='{info[0]}', cost={info[1]}, amount_owned={info[2]}, player_made={info[3]} WHERE id={id}"""
-        print(sql)
 
         self.c.execute(sql)
         self.conn.commit()
