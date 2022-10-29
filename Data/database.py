@@ -13,7 +13,7 @@ class database(object):
             if conn:
                 conn.close()
     
-    def execute_table_sql(self, sql):
+    def execute_sql(self, sql):
         try:
             self.c.execute(sql)
             self.conn.commit()
@@ -22,7 +22,6 @@ class database(object):
     
     def create_users_db(self):
         sql = """CREATE TABLE IF NOT EXISTS users (
-                    id integer PRIMARY KEY,
                     discord_id integer,
                     money integer NOT NULL,
                     items text,
@@ -31,7 +30,7 @@ class database(object):
                     ownerships text
                 );"""
         
-        self.execute_table_sql(sql)
+        self.execute_sql(sql)
 
     def add_user_to_database(self, user_info):
         sql = """INSERT INTO users (discord_id, money, items, effects, debts, ownerships) VALUES (?,?,?,?,?,?)"""
@@ -39,15 +38,21 @@ class database(object):
         self.c.execute(sql, user_info)
         self.conn.commit()
     
-    def user_exists_in_database(self, discord_id):
+    def get_user_info(self, discord_id):
         sql = f"""SELECT * FROM users WHERE discord_id={discord_id}"""
 
         self.c.execute(sql)
         data_found = self.c.fetchall()
         if data_found != []:
-            return data_found
+            return data_found[0]
         return False
     
+    def update_user_info(self, id, item, value):
+        if isinstance(value, str):
+            value = "'" + value + "'"
+        sql = f"""UPDATE users SET {item}={value} WHERE id={id}"""
+
+        self.execute_sql(sql)
 
     def create_items_db(self):
         sql = """CREATE TABLE IF NOT EXISTS items (
@@ -58,7 +63,7 @@ class database(object):
                     player_made integer
                 );"""
         
-        self.execute_table_sql(sql)
+        self.execute_sql(sql)
 
 
     def add_item_to_database(self, info):
@@ -67,8 +72,17 @@ class database(object):
         self.c.execute(sql, info)
         self.conn.commit()
     
-    def get_item(self, id):
+    def get_item_by_id(self, id):
         sql = f"""SELECT * FROM items WHERE id={id}"""
+
+        self.c.execute(sql)
+        data_found = self.c.fetchall()
+        if data_found != []:
+            return data_found[0]
+        return False
+    
+    def get_item_by_name(self, name):
+        sql = f"""SELECT * FROM items WHERE name={name.lower()}"""
 
         self.c.execute(sql)
         data_found = self.c.fetchall()
