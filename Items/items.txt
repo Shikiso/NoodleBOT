@@ -443,4 +443,18 @@ tiger
 tube of lipstick
 light bulb
 feather
-glass
+hotel
+plane
+jett
+helicopter
+lamborghini
+ferrari
+porsche
+mercedes-Benz
+maserati
+audi
+BMW
+aston Martin
+bugatti
+toyota
+honda

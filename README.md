@@ -16,7 +16,7 @@
 
 > Create items
 > Create Embed Handler
-- Create Inventory
+> Create Inventory
 - Create buy, sell, etc commands
 - Create price alteration based on demand
 - Create website

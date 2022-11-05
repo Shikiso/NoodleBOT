@@ -1,5 +1,6 @@
 # Personal
-Data/database.db
+Data/sql_data_storage.db
+Data/json_data.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
