@@ -17,13 +17,16 @@ if Reset:
 
     jsonObj.data = {}
     jsonObj.write()
+
+    log.info("[+] Creating database tables...")
+    sqlObj.create_table('users', {'DiscordID':'integer NOT NULL', 'Money':'integer', 'Items':'text'})
+    sqlObj.create_table('items', {'ID':'integer NOT NULL', 'Name':'text', 'Price':'integer', 'Existing':'integer'})
+
+    log.info("[+] Creating items...")
+    ItemHandler().generate_random_price_multiplier()
+    ItemHandler().generate_items()
+    ItemHandler().save_items_to_database()
     exit()
 
-log.info("[+] Creating database tables...")
-sqlObj.create_table('users', {'DiscordID':'integer NOT NULL', 'Money':'integer', 'Items':'text'})
-sqlObj.create_table('items', {'ID':'integer NOT NULL', 'Name':'text', 'Price':'integer', 'Existing':'integer'})
-
-log.info("[+] Creating items...")
-ItemHandler().generate_random_price_multiplier()
-ItemHandler().generate_items()
-ItemHandler().save_items_to_database()
+log.info("[+] Loading items...")
+ItemHandler().load_items_from_database()

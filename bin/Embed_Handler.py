@@ -36,10 +36,7 @@ class embed:
 				self.field(name, value, inline)			
 	
 	def field(self, name, value, inline=False):
-		if value:
-			self.e.add_field(name=name, value=value, inline=inline)
-		else:
-			self.e.add_field(name=name, inline=inline)
+		self.e.add_field(name=name, value=value, inline=inline)
 	
 	def get_embed(self):
 		return self.e

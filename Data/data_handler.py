@@ -90,11 +90,14 @@ class sql:
         self.execute(sql, values=values)
     
     def select(self, table: str, items: str, condition: tuple, select_one=False):
-        if isinstance(condition[1], str):
-            i = f"'{condition[1]}'"
+        if condition:
+            if isinstance(condition[1], str):
+                i = f"'{condition[1]}'"
+            else:
+                i = condition[1]
+            sql = f"SELECT {items} FROM {table} WHERE {condition[0]}={i}"
         else:
-            i = condition[1]
-        sql = f"SELECT {items} FROM {table} WHERE {condition[0]}={i}"
+            sql = f"SELECT {items} FROM {table}"
 
         if select_one:
             return self.execute(sql, select_one=True, commit=False)
