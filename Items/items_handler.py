@@ -7,7 +7,7 @@ The less of an item exists the more it will cost vise versa.
 from random import randint
 
 class item_handler(object):
-    from bin.quick_access import jsonObj
+    from bin.quick_access import jsonObj, sqlObj
 
     items_text_file = "./Items/items.txt"
     Items = {} # ID:(name, price, exists)
@@ -40,3 +40,11 @@ class item_handler(object):
         
         for item in all_items:
             self.create_item(item, self.default_amount_exists)
+    
+    def save_items_to_database(self):
+        for item, item_info in self.Items.items():
+            id = item
+            name = item_info[0]
+            price = item_info[1]
+            existing = item_info[2]
+            self.sqlObj.insert('items', ('ID', 'Name', 'Price', 'Existing'), (id, name, price, existing))

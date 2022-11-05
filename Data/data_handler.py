@@ -17,7 +17,7 @@ class sql:
     
     def execute(self, sql, values=None, select_one=False, select_all=False, commit=True):
         try:
-            log.debug("SQL statement: \n" + sql)
+            log.debug("SQL statement: " + sql)
             if not self.test:
                 if values:
                     self.c.execute(sql, values)
@@ -30,7 +30,7 @@ class sql:
                 elif select_all:
                     return self.c.fetchall()
         except sqlite3.Error as e:
-            log.error("Error executing sql statement!\n", sql, "\n", e)
+            log.error("Error executing sql statement: ", sql, "\nError: ", e)
             if self.conn:
                 self.conn.close()
     
