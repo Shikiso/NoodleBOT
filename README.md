@@ -19,6 +19,9 @@
 > Create Inventory
 > Create buy, sell, etc commands
 > Create price alteration based on demand
+
+# ----------------------------------------------------------------
+# Possible Ideas
 - Create website
 - Create crates
 - Make it so players can open stores
