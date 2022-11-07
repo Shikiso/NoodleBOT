@@ -1,4 +1,4 @@
-from bin.quick_access import sqlObj, jsonObj
+from bin.quick_access import jsonVars, jsonUsers, jsonItems
 from bin.needed_vars import *
 from Items.items_handler import item_handler as ItemHandler
 import Data.data_handler # setup json and sql objects
@@ -12,16 +12,15 @@ if Debug:
 
 if Reset:
     log.warning("[!] Resetting all data!")
-    sqlObj.drop('users')
-    sqlObj.drop('items')
+    jsonVars.data = {}
+    jsonVars.write()
 
-    jsonObj.data = {}
-    jsonObj.write()
+    jsonUsers.data = {}
+    jsonUsers.write()
 
-    log.info("[+] Creating database tables...")
-    sqlObj.create_table('users', {'DiscordID':'integer NOT NULL', 'Money':'integer', 'Items':'text'})
-    sqlObj.create_table('items', {'ID':'integer NOT NULL', 'Name':'text', 'Price':'integer', 'Existing':'integer'})
-
+    jsonItems.data = {}
+    jsonItems.write()
+    
     log.info("[+] Creating items...")
     ItemHandler().generate_random_price_multiplier()
     ItemHandler().generate_items()

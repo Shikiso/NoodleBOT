@@ -43,7 +43,7 @@ def get_user_object(user_id):
 
 def pass_transaction(itemID=None):
     global TransactionCounter
-    log.debug(f"[TRASNACTION] Transaction made {TransactionCounter} in total.")
+    log.debug(f"[TRANSACTION] Transaction made {TransactionCounter} in total.")
     if TransactionCounter >= 50 and itemID:
         ItemHandler.update_price_to_demand(itemID)
 
@@ -61,6 +61,15 @@ async def self(interaction: discord.Integration, user: discord.Member, amount: i
         log.warning(f"[ADMIN] {user_id} : {interaction.user.name}, donated {recieving_user_id} : {user.name}, ${amount}")
         e = embed(title="ADMIN COMMAND", description=f"Donated ${amount} to {user}").get_embed()
         await interaction.response.send_message(embed=e)
+
+@tree.command(name="create", description="Creates a new item.", guild=noodle_server)
+async def self(interaction: discord.Integration, name: str, exists: int):
+    ItemHandler.create_item(name, exists)
+    ItemHandler.save_item_to_database(name, exists)
+    with open("./Items/items.txt", 'a') as f:
+        f.write(name + ',' + str(exists) + '\n')
+    e = embed(title="ADMIN COMMAND", description=f"Created {name} item with {exists} existing").get_embed()
+    await interaction.response.send_message(embed=e)
 
 # Commands
 @tree.command(name="inventory", description="Shows your user inventory.", guild=noodle_server)

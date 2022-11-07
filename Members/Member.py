@@ -1,4 +1,4 @@
-from bin.quick_access import sqlObj
+from bin.quick_access import jsonUsers
 from bin.needed_vars import *
 
 class User(object):
@@ -10,11 +10,15 @@ class User(object):
 
     def add_money(self, amount):
         self.Money += amount
-        sqlObj.update('users', {'Money':self.Money}, ('DiscordID', self.DiscordID))
+        print(jsonUsers.data)
+        jsonUsers.data[str(self.DiscordID)][0] = self.Money
+        print(jsonUsers.data)
+        jsonUsers.write()
 
     def sub_money(self, amount):
         self.Money -= amount
-        sqlObj.update('users', {'Money':self.Money}, ('DiscordID', self.DiscordID))
+        jsonUsers.data[str(self.DiscordID)][0] = self.Money
+        jsonUsers.write()
     
     def add_item(self, ID):
         if ID not in self.Items:
@@ -22,20 +26,26 @@ class User(object):
         else:
             self.Items[ID] += 1
         
-        sqlObj.update('users', {'Items':str(self.Items)}, ('DiscordID', self.DiscordID))
+        jsonUsers.data[str(self.DiscordID)][1] = self.Items
+        jsonUsers.write()
     
     def sub_item(self, ID):
         if ID in self.Items:
-            self.Items[ID] -= 1
+            if self.Items[ID] -1 == 0:
+                self.Items.pop(ID)
+            else:
+                self.Items[ID] -= 1
         
-        sqlObj.update('users', {'Items':str(self.Items)}, ('DiscordID', self.DiscordID))
+        jsonUsers.data[str(self.DiscordID)][1] = self.Items
+        jsonUsers.write()
 
 def check_if_user_in_database(DiscordID):
-        Users = sqlObj.select('users', '*', ('DiscordID', DiscordID), True)
-        if Users:
-            return Users # (user, money, items)
-        return False        
+    try:
+        Users = jsonUsers.data[str(DiscordID)]
+        return Users # [money: str, items: {}]
+    except:
+        return False  
         
 def add_user_to_database(user_object):
     log.info("[+] Adding user {} to database".format(user_object.DiscordID))
-    sqlObj.insert('users', ('DiscordID', 'Money', 'Items'), (user_object.DiscordID, user_object.Money, str(user_object.Items)))
+    jsonUsers.add_data(user_object.DiscordID, [user_object.Money, user_object.Items])

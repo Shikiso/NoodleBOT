@@ -2,6 +2,36 @@ import sqlite3
 from bin.needed_vars import *
 import json as JSON
 
+class json:
+
+    def __init__(self, data_store_location="./Data/json_data.json"):
+        self.dsl = data_store_location
+        self.data = {}
+
+        self.load_json_data()
+
+    def load_json_data(self):
+        try:
+            with open(self.dsl, 'r') as f:
+                json_data = JSON.load(f)
+            self.data = json_data
+        except:
+            self.write()
+    
+    def add_data(self, key, item):
+        self.data[key] = item
+        self.write()
+
+    def write(self):
+        with open(self.dsl, 'w') as f:
+            JSON.dump(self.data, f, indent=4)
+
+    def convert_dict_to_json(self, dictionary):
+        return JSON.dumps(dictionary)
+    
+    def convert_json_to_dict(self, json_data):
+        return JSON.loads(json_data)
+
 class sql:
 
     def __init__(self, lite=True, data_store_location="./Data/sql_data_storage.db", test=False):
@@ -119,33 +149,3 @@ class sql:
     def drop(self, table: str):
         sql = f"DROP TABLE {table}"
         self.execute(sql)
-
-class json:
-
-    def __init__(self, data_store_location="./Data/json_data.json"):
-        self.dsl = data_store_location
-        self.data = {}
-
-        self.load_json_data()
-
-    def load_json_data(self):
-        try:
-            with open(self.dsl, 'r') as f:
-                json_data = JSON.load(f)
-            self.data = json_data
-        except:
-            return {}
-    
-    def add_data(self, key, item):
-        self.data[key] = item
-        self.write()
-
-    def write(self):
-        with open(self.dsl, 'w') as f:
-            JSON.dump(self.data, f, indent=4)
-
-    def convert_dict_to_json(self, dictionary):
-        return JSON.dumps(dictionary)
-    
-    def convert_json_to_dict(self, json_data):
-        return JSON.loads(json_data)

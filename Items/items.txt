@@ -1,4 +1,4 @@
-pen
+pen,10
 window
 thread
 money
@@ -458,3 +458,4 @@ aston Martin
 bugatti
 toyota
 honda
+name1,1name2,1

@@ -7,8 +7,8 @@ The less of an item exists the more it will cost vise versa.
 from random import randint
 from bin.needed_vars import *
 
-class item_handler(object):
-    from bin.quick_access import jsonObj, sqlObj, Items, Items_IDs
+class item_handler:
+    from bin.quick_access import jsonVars, jsonItems, Items, Items_IDs
 
     items_text_file = "./Items/items.txt"
     default_amount_exists = 10000
@@ -18,11 +18,11 @@ class item_handler(object):
 
     def generate_random_price_multiplier(self):
         rpm = randint(1000,1000000)
-        self.jsonObj.add_data('rpm', rpm)
+        self.jsonVars.add_data('rpm', rpm)
         return rpm
 
     def get_random_price_multiplier(self):
-        return self.jsonObj.data['rpm']
+        return self.jsonVars.data['rpm']
 
     def generate_price(self, exists):
         price = self.get_random_price_multiplier() / exists
@@ -40,7 +40,11 @@ class item_handler(object):
             all_items = f.readlines()
         
         for item in all_items:
-            self.create_item(item, self.default_amount_exists)
+            if ',' in item:
+                item, exists = item.split(',')
+                self.create_item(item, int(exists))
+            else:
+                self.create_item(item, self.default_amount_exists)
     
     def save_items_to_database(self):
         for item, item_info in self.Items.items():
@@ -48,19 +52,29 @@ class item_handler(object):
             name = item_info[0]
             price = item_info[1]
             existing = item_info[2]
-            self.sqlObj.insert('items', ('ID', 'Name', 'Price', 'Existing'), (id, name, price, existing))
+            self.jsonItems.add_data(key=id, item=[name, price, existing])
+    
+    def save_item_to_database(self, name, exists):
+        id = self.create_id()
+        price = self.generate_price(exists)
+        self.jsonItems.add_data(key=id, item=[name, price, exists])
     
     def load_items_from_database(self):
-        items = self.sqlObj.select('items', '*', None)
+        items = self.jsonItems.data
 
-        for item in items:
-            id, name, price, existing = item
-            self.Items[id] = [name, price, existing]
-            self.Items_IDs[name] = id
+        for itemID in items:
+            item = items[itemID]
+            name, price, existing = item
+            self.Items[itemID] = [name, price, existing]
+            self.Items_IDs[name] = itemID
+    
+    def update_item_info(self, itemID, variableIndex, value):
+        self.jsonItems.data[str(itemID)][variableIndex] = value
+        self.jsonItems.write()
     
     def update_price_to_demand(self, itemID):
-        itemInfo = self.Items[itemID]
+        itemInfo = self.Items[str(itemID)]
         newPrice = self.generate_price(itemInfo[2])
-        self.Items[itemID][1] = newPrice
+        self.Items[str(itemID)][1] = newPrice
         log.debug(f"Updating price of {itemID} to {newPrice}")
-        self.sqlObj.update('items', {'Price':newPrice}, ('ID', itemID))
+        self.update_item_info(itemID, 1, newPrice)
