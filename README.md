@@ -1,5 +1,6 @@
 # NoodleBOT - Shikiso
-https://discord.com/api/oauth2/authorize?client_id=1031205330039865384&permissions=8&scope=bot
+# Add Bot
+>https://discord.com/api/oauth2/authorize?client_id=1031205330039865384&permissions=8&scope=bot
 # ----------------------------------------------------------------
 # Commands
 - Buy - Buy items from shop
