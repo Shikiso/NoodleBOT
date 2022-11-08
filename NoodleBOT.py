@@ -50,7 +50,7 @@ def pass_transaction(itemID=None):
     TransactionCounter += 1
 
 # Admin Commands
-@tree.command(name="donate", description="Gives users money.", guild=noodle_server)
+@tree.command(name="donate", description="Gives users money.")
 async def self(interaction: discord.Integration, user: discord.Member, amount: int):
     user_id = interaction.user.id
     if user_id in NoodleBOT_ADMINS:
@@ -62,7 +62,7 @@ async def self(interaction: discord.Integration, user: discord.Member, amount: i
         e = embed(title="ADMIN COMMAND", description=f"Donated ${amount} to {user}").get_embed()
         await interaction.response.send_message(embed=e)
 
-@tree.command(name="create", description="Creates a new item.", guild=noodle_server)
+@tree.command(name="create", description="Creates a new item.")
 async def self(interaction: discord.Integration, name: str, exists: int):
     ItemHandler.create_item(name, exists)
     ItemHandler.save_item_to_database(name, exists)
@@ -72,7 +72,7 @@ async def self(interaction: discord.Integration, name: str, exists: int):
     await interaction.response.send_message(embed=e)
 
 # Commands
-@tree.command(name="inventory", description="Shows your user inventory.", guild=noodle_server)
+@tree.command(name="inventory", description="Shows your user inventory.")
 async def self(interaction: discord.Integration, member: discord.Member = None):
     if member is None:
         user = interaction.user
@@ -94,7 +94,7 @@ async def self(interaction: discord.Integration, member: discord.Member = None):
     await interaction.response.send_message(embed=e)
 
 
-@tree.command(name="buy", description="Buy item", guild=noodle_server)
+@tree.command(name="buy", description="Buy item")
 async def self(interaction: discord.Integration, item: str, amount: int = 1):
     user = interaction.user
     userObj = Users[user.id]
@@ -124,7 +124,7 @@ async def self(interaction: discord.Integration, item: str, amount: int = 1):
 
     await interaction.response.send_message(embed=e)
 
-@tree.command(name="sell", description="Sell item", guild=noodle_server)
+@tree.command(name="sell", description="Sell item")
 async def self(interaction: discord.Integration, item: str, amount: int = 1):
     user = interaction.user
     userObj = Users[user.id]
@@ -156,7 +156,7 @@ async def self(interaction: discord.Integration, item: str, amount: int = 1):
     
     await interaction.response.send_message(embed=e)
 
-@tree.command(name="balance", description="Check users balance", guild=noodle_server)
+@tree.command(name="balance", description="Check users balance")
 async def self(interaction: discord.Integration, member: discord.Member = None):
     if member is None:
         user = interaction.user
