@@ -1,4 +1,4 @@
-pen,10
+pen
 window
 thread
 money
@@ -7,7 +7,6 @@ wagon
 sand paper
 speakers
 sponge
-carrots
 chapter book
 lace
 table
@@ -458,4 +457,3 @@ aston Martin
 bugatti
 toyota
 honda
-name1,1name2,1

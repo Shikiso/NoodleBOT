@@ -1,8 +1,9 @@
 from Data.data_handler import json, sql
 
-jsonVars = json() # json class object
+jsonVars = json("./Data/json_data.json") # json class object
 jsonItems = json("./Data/items.json")
 jsonUsers = json("./Data/users.json")
+jsonStores = json("./Data/stores.json")
 # sqlObj = sql() # sql class object
 
 Users = {} # dictionary to store all user information

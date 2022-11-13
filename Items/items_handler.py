@@ -4,20 +4,24 @@ It will then store the items into a database and create a dictionary of the item
 The less of an item exists the more it will cost vise versa.
 '''
 
-from random import randint
+from random import randint, choice
 from bin.needed_vars import *
 
 class item_handler:
     from bin.quick_access import jsonVars, jsonItems, Items, Items_IDs
 
     items_text_file = "./Items/items.txt"
-    default_amount_exists = 10000
+    unlimited = -1
+    rare = 432596
+    legend = 22356
+    mythical = 500
+    item_amount_choices = [unlimited, unlimited, unlimited, unlimited, rare, rare, rare, legend, legend, mythical]
 
     def create_id(self):
         return len(self.Items)+1
 
     def generate_random_price_multiplier(self):
-        rpm = randint(1000,1000000)
+        rpm = randint(1000000,9999999)
         self.jsonVars.add_data('rpm', rpm)
         return rpm
 
@@ -25,7 +29,10 @@ class item_handler:
         return self.jsonVars.data['rpm']
 
     def generate_price(self, exists):
+        if exists == self.unlimited:
+            return 100
         price = self.get_random_price_multiplier() / exists
+        price *= 100
         return round(price, 0)
 
     def create_item(self, item, exists):
@@ -44,7 +51,8 @@ class item_handler:
                 item, exists = item.split(',')
                 self.create_item(item, int(exists))
             else:
-                self.create_item(item, self.default_amount_exists)
+                exists = choice(self.item_amount_choices)
+                self.create_item(item, exists)
     
     def save_items_to_database(self):
         for item, item_info in self.Items.items():

@@ -4,7 +4,7 @@ import json as JSON
 
 class json:
 
-    def __init__(self, data_store_location="./Data/json_data.json"):
+    def __init__(self, data_store_location):
         self.dsl = data_store_location
         self.data = {}
 
