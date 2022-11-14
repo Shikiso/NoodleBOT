@@ -247,44 +247,7 @@ async def self(interaction: discord.Interaction):
 
     await interaction.response.send_message(embed=e, view=view)
 
-# Stores
-@tree.command(name="open_store", description="Makes the server become a store that can do business with other servers", guild=noodle_server)
-@app_commands.checks.has_permissions(administrator=True)
-async def self(interaction: discord.Interaction, name: str = None):
-    user = interaction.user
-    if interaction.guild.id not in jsonStores.data:
-        if not name:
-            name = interaction.guild.name
-        jsonStores.add_data(interaction.guild.id, {
-                                                    'name':name,
-                                                    'items':{},
-                                                    'sales':0,
-                                                    'worth':0
-                                                    })
-        log.info(f"[STORES] New store opened by {user} : {name} : {interaction.guild.id}")
-        e = embed(title="Store", description=f"You have open a store!").get_embed()
-    else:
-        e = embed(title="Store", description=f"You have already opened a store!").get_embed()
 
-    await interaction.response.send_message(embed=e)
-
-@tree.command(name="stores", description="Show a list of all stores", guild=noodle_server)
-async def self(interaction: discord.Interaction, name: str = None, item: str = None, amount: int = 1):
-    fields = []
-    #e = embed(title=f"Stores", fields=)
-    
-    if name:
-        for store in jsonStores.data:
-            if jsonStores.data[store]['name'] == name:
-                for item in jsonStores.data[store]['items']:
-                    
-
-# Error Handling
-@tree.error
-async def on_app_command_error(interaction, error):
-    if isinstance(error, app_commands.MissingPermissions):
-        await interaction.response.send_message("Missing Permissions!")
-        log.info("[-] Command failed to run due to a missing permissions!")
 
 if __name__ == "__main__":
     client.run(getenv("TOKEN"))
