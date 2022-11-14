@@ -62,9 +62,11 @@ class item_handler:
             existing = item_info[2]
             self.jsonItems.add_data(key=id, item=[name, price, existing])
     
-    def save_item_to_database(self, name, exists):
-        id = self.create_id()
-        price = self.generate_price(exists)
+    def save_item_to_database(self, name, exists, id=None, price=None):
+        if not id:
+            id = self.create_id()
+        if not price:
+            price = self.generate_price(exists)
         self.jsonItems.add_data(key=id, item=[name, price, exists])
     
     def load_items_from_database(self):
@@ -86,3 +88,12 @@ class item_handler:
         self.Items[str(itemID)][1] = newPrice
         log.debug(f"Updating price of {itemID} to {newPrice}")
         self.update_item_info(itemID, 1, newPrice)
+    
+    def add_test_item(self):
+        id = 0
+        name = "test_item"
+        price = -1
+        exists = 0
+        self.Items[id] = [name, price, exists]
+        self.Items_IDs[name] = id
+        self.save_item_to_database(name, exists, id, price)

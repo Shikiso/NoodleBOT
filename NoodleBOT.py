@@ -1,17 +1,19 @@
 # Invite Link: https://discord.com/api/oauth2/authorize?client_id=1031205330039865384&permissions=8&scope=bot
-import bin.config # sets up database and other functionality
-from bin.needed_vars import *
-from bin.quick_access import Users, Items, Items_IDs, update_item_amount_existing, jsonStores
-from bin.Embed_Handler import embed
-from Members.load_members import start
+from os import getenv
+from random import choice
 
 import discord
 from discord import app_commands
 from discord.ext import commands
 from discord.ui import View
 from dotenv import load_dotenv
-from os import getenv
-from random import choice
+
+import bin.config  # sets up database and other functionality
+from bin.Embed_Handler import embed
+from bin.needed_vars import *
+from bin.quick_access import (Items, Items_IDs, Users, jsonStores,
+                              update_item_amount_existing)
+from Members.load_members import start
 
 intents_varaible = discord.Intents.all()
 noodle_server = discord.Object(id=992294737405026324)
@@ -268,16 +270,39 @@ async def self(interaction: discord.Interaction, name: str = None):
 
     await interaction.response.send_message(embed=e)
 
-@tree.command(name="stores", description="Show a list of all stores", guild=noodle_server)
-async def self(interaction: discord.Interaction, name: str = None, item: str = None, amount: int = 1):
-    fields = []
-    #e = embed(title=f"Stores", fields=)
-    
+@tree.command(name="stores", description="Show a list of all stores with specific item, or show a specific stores items", guild=noodle_server)
+async def self(interaction: discord.Interaction, name: str = None, item: str = None, amount: int = -1):
     if name:
+        e = embed(title=f"Stores", description=f"No store called {name} found!").get_embed()
+
         for store in jsonStores.data:
-            if jsonStores.data[store]['name'] == name:
-                for item in jsonStores.data[store]['items']:
-                    
+            if jsonStores.data[store]['name'].lower() == name.lower():
+                
+                if item:
+                    if item in Items_IDs and item in jsonStores.data[store]['items']:
+                        itemID = Items_IDs[item]
+                        itemName = Items[itemID][0]
+                        if itemName.lower() == item:
+                            itemPrice = Items[itemID][1]
+                            amount = jsonStores.data[store]['items'][itemID][itemName]
+                            e = embed(title=f"Stores", description=f"Shop has x{amount} of {itemName}.\nThey are selling for ${itemPrice}").get_embed()
+                        else:
+                            e = embed(title=f"Stores", description=f"Shop does not own any {item}").get_embed()
+                else:
+                    fields = []
+
+                    for itemID in jsonStores.data[store]['items']:
+                        itemName = Items[itemID][0]
+                        amount = jsonStores.data[store]['items'][itemID]
+                        fields.append((itemName, 'Owned: ' + str(amount), False))
+        
+                    e = embed(title=f"Stores", fields=fields).get_embed()
+    
+    await interaction.response.send_message(embed=e)
+
+@tree.command(name="test", description="testing command")
+async def self(interaction: discord.Interaction):
+    pass
 
 # Error Handling
 @tree.error
