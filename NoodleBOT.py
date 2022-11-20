@@ -1,7 +1,6 @@
 # Invite Link: https://discord.com/api/oauth2/authorize?client_id=1031205330039865384&permissions=8&scope=bot
 from os import getenv
 from random import choice
-
 import discord
 from discord import app_commands
 from discord.ext import commands
@@ -11,8 +10,7 @@ from dotenv import load_dotenv
 import bin.config  # sets up database and other functionality
 from bin.Embed_Handler import embed
 from bin.needed_vars import *
-from bin.quick_access import (Items, Items_IDs, Users, jsonStores,
-                              update_item_amount_existing)
+from bin.quick_access import Items, Items_IDs, Users, jsonStores, update_item_amount_existing, reload_data
 from Members.load_members import start
 
 intents_varaible = discord.Intents.all()
@@ -38,6 +36,7 @@ client = aclient()
 tree = app_commands.CommandTree(client)
 NoodleBOT_ADMINS = [964887596754944100, 1035925157065277550]
 ItemHandler = bin.config.ItemHandler()
+Debug = bin.config.Debug
 TransactionCounter = 1
 
 # Functions to help with commands
@@ -53,27 +52,42 @@ def pass_transaction(itemID=None):
 
     TransactionCounter += 1
 
-# Admin Commands
+# Dev commands to help with development of bot
+def check_admin(id):
+    if id in NoodleBOT_ADMINS:
+        return True
+    return False
+
 @tree.command(name="donate", description="Gives users money.")
 async def self(interaction: discord.Integration, user: discord.Member, amount: int):
-    user_id = interaction.user.id
-    if user_id in NoodleBOT_ADMINS:
+    if check_admin(interaction.user.id):
         recieving_user_id = user.id
         
         userObj = get_user_object(recieving_user_id)
         userObj.add_money(amount)
-        log.warning(f"[ADMIN] {user_id} : {interaction.user.name}, donated {recieving_user_id} : {user.name}, ${amount}")
+        log.warning(f"[ADMIN] {interaction.user.id} : {interaction.user.name}, donated {recieving_user_id} : {user.name}, ${amount}")
         e = embed(title="ADMIN COMMAND", description=f"Donated ${amount} to {user}").get_embed()
         await interaction.response.send_message(embed=e)
 
 @tree.command(name="create", description="Creates a new item.")
 async def self(interaction: discord.Integration, name: str, exists: int):
-    ItemHandler.create_item(name, exists)
-    ItemHandler.save_item_to_database(name, exists)
-    with open("./Items/items.txt", 'a') as f:
-        f.write(name + ',' + str(exists) + '\n')
-    e = embed(title="ADMIN COMMAND", description=f"Created {name} item with {exists} existing").get_embed()
-    await interaction.response.send_message(embed=e)
+    if check_admin(interaction.user.id):
+        ItemHandler.create_item(name, exists)
+        ItemHandler.save_item_to_database(name, exists)
+        with open("./Items/items.txt", 'a') as f:
+            f.write(name + ',' + str(exists) + '\n')
+        e = embed(title="ADMIN COMMAND", description=f"Created {name} item with {exists} existing").get_embed()
+        await interaction.response.send_message(embed=e)
+
+@tree.command(name="reload", description="Reloads all data from database", guild=noodle_server)
+async def self(interaction: discord.Interaction):
+    if check_admin(interaction.user.id) and Debug:
+        reload_data()
+
+@tree.command(name="data", description="Displays all changing data", guild=noodle_server)
+async def self(interaction: discord.Integration):
+    if check_admin(interaction.user.id) and Debug:
+        await interaction.response.send_message(f"{Items}\n\n{Items_IDs}\n\n{Users}")
 
 # Basic Commands
 @tree.command(name="inventory", description="Shows your user inventory.")
@@ -277,17 +291,21 @@ async def self(interaction: discord.Interaction, name: str = None, item: str = N
 
         for store in jsonStores.data:
             if jsonStores.data[store]['name'].lower() == name.lower():
+                storeName = jsonStores.data[store]['name']
                 
                 if item:
+                    print(1)
                     if item in Items_IDs and item in jsonStores.data[store]['items']:
                         itemID = Items_IDs[item]
                         itemName = Items[itemID][0]
+                        print(2)
                         if itemName.lower() == item:
+                            print(3)
                             itemPrice = Items[itemID][1]
                             amount = jsonStores.data[store]['items'][itemID][itemName]
-                            e = embed(title=f"Stores", description=f"Shop has x{amount} of {itemName}.\nThey are selling for ${itemPrice}").get_embed()
+                            e = embed(title=f"Stores - {storeName}", description=f"Shop has x{amount} of {itemName}.\nThey are selling for ${itemPrice}").get_embed()
                         else:
-                            e = embed(title=f"Stores", description=f"Shop does not own any {item}").get_embed()
+                            e = embed(title=f"Stores - {storeName}", description=f"Shop does not own any {item}").get_embed()
                 else:
                     fields = []
 
