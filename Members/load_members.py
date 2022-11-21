@@ -18,5 +18,5 @@ def start(client):
     log.info("[+] Creating User objects...")
     for guild in client.guilds:
         for member in guild.members:
-            if not member.bot:
+            if not member.bot and member.id not in Users:
                 create_user_object(member)

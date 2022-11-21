@@ -33,7 +33,7 @@ class item_handler:
             return 100
         price = self.get_random_price_multiplier() / exists
         price *= 100
-        return round(price, 0)
+        return round(price, 2)
 
     def create_item(self, item, exists):
         id = self.create_id()
@@ -62,9 +62,11 @@ class item_handler:
             existing = item_info[2]
             self.jsonItems.add_data(key=id, item=[name, price, existing])
     
-    def save_item_to_database(self, name, exists):
-        id = self.create_id()
-        price = self.generate_price(exists)
+    def save_item_to_database(self, name, exists, id=None, price=None):
+        if not id:
+            id = self.create_id()
+        if not price:
+            price = self.generate_price(exists)
         self.jsonItems.add_data(key=id, item=[name, price, exists])
     
     def load_items_from_database(self):

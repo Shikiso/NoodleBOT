@@ -1,7 +1,7 @@
 pen
 window
 thread
-money
+gold
 lip gloss
 wagon
 sand paper

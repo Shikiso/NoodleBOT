@@ -1,4 +1,4 @@
-from bin.quick_access import jsonVars, jsonUsers, jsonItems, jsonStores
+from bin.quick_access import json_data
 from bin.needed_vars import *
 from Items.items_handler import item_handler as ItemHandler
 import Data.data_handler # setup json and sql objects
@@ -6,8 +6,6 @@ import Data.data_handler # setup json and sql objects
 Debug = True # Set to True to allow debug & info logging
 
 Reset = False # Set to True to reset all data
-
-json_data = [jsonVars, jsonUsers, jsonStores, jsonItems]
 
 if Debug:
     log.basicConfig(level=log.DEBUG)
