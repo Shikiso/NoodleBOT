@@ -9,7 +9,6 @@ Reset = False # Set to True to reset all data
 
 if Debug:
     log.basicConfig(level=log.DEBUG)
-    ItemHandler().add_test_item()
 
 if Reset:
     log.warning("[!] Resetting all data!")

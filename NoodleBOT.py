@@ -86,8 +86,9 @@ async def self(interaction: discord.Interaction):
 
 @tree.command(name="data", description="Displays all changing data", guild=noodle_server)
 async def self(interaction: discord.Integration):
+    print(1)
     if check_admin(interaction.user.id) and Debug:
-        await interaction.response.send_message(f"{Items}\n\n{Items_IDs}\n\n{Users}")
+        print(f"ITEMS\n{Items}\n\nITEM IDS\n{Items_IDs}\n\nUSERS\n{Users}")
 
 # Basic Commands
 @tree.command(name="inventory", description="Shows your user inventory.")
@@ -288,34 +289,57 @@ async def self(interaction: discord.Interaction, name: str = None):
 async def self(interaction: discord.Interaction, name: str = None, item: str = None, amount: int = -1):
     if name:
         e = embed(title=f"Stores", description=f"No store called {name} found!").get_embed()
-
         for store in jsonStores.data:
             if jsonStores.data[store]['name'].lower() == name.lower():
                 storeName = jsonStores.data[store]['name']
                 
                 if item:
-                    print(1)
-                    if item in Items_IDs and item in jsonStores.data[store]['items']:
+                    e = embed(title=f"Stores", description=f"No store called {name} with {item} found!").get_embed()
+
+                    if item in Items_IDs:
                         itemID = Items_IDs[item]
                         itemName = Items[itemID][0]
-                        print(2)
-                        if itemName.lower() == item:
-                            print(3)
+                        if itemID in jsonStores.data[store]['items']:
                             itemPrice = Items[itemID][1]
-                            amount = jsonStores.data[store]['items'][itemID][itemName]
-                            e = embed(title=f"Stores - {storeName}", description=f"Shop has x{amount} of {itemName}.\nThey are selling for ${itemPrice}").get_embed()
+                            amount = jsonStores.data[store]['items'][itemID]
+                            e = embed(title=f"Stores - {storeName}", description=f"Shop has {amount} of {itemName}.\nThey are selling for ${itemPrice}").get_embed()
                         else:
                             e = embed(title=f"Stores - {storeName}", description=f"Shop does not own any {item}").get_embed()
                 else:
                     fields = []
 
-                    for itemID in jsonStores.data[store]['items']:
-                        itemName = Items[itemID][0]
-                        amount = jsonStores.data[store]['items'][itemID]
-                        fields.append((itemName, 'Owned: ' + str(amount), False))
+                    if jsonStores.data[store]['items'] != []:
+                        for itemID in jsonStores.data[store]['items']:
+                            itemName = Items[itemID][0]
+                            amount = jsonStores.data[store]['items'][itemID]
+                            fields.append((itemName, 'Owned: ' + str(amount), False))
+            
+                        e = embed(title=f"Stores - {name}", fields=fields).get_embed()
+                    else:
+                        e = embed(title=f"Stores - {name}", description="This store has nothing in stock").get_embed()
+    elif item:
+        fields = []
         
-                    e = embed(title=f"Stores", fields=fields).get_embed()
+        if item in Items_IDs:
+            for store in jsonStores.data:
+                storeName = jsonStores.data[store]['name']
+                itemID = Items_IDs[item]
+                itemName = Items[itemID][0]
+                
+                if itemID in jsonStores.data[store]['items']:
+                    itemPrice = Items[itemID][1]
+                    itemAmount = jsonStores.data[store]['items'][itemID]
+                    if amount:
+                        if itemAmount <= amount:
+                            fields.append((itemName, f"{itemAmount} : ${itemPrice}", False))
+                    else:
+                        fields.append((itemName, f"{itemAmount} : ${itemPrice}", False))
+            e = embed(title=f"Stores - {item}", fields=fields).get_embed()
+        else:
+            e = embed(title=f"Stores - {item}", description=f"{item} does not exist!").get_embed()
     
+    elif amount:
+        e = embed(title=f"Stores", description=f"You need to specifiy an item as well!").get_embed()
     await interaction.response.send_message(embed=e)
 
 @tree.command(name="test", description="testing command")
