@@ -265,8 +265,6 @@ async def self(interaction: discord.Interaction):
     await interaction.response.send_message(embed=e, view=view)
 
 
-
-
 # Stores
 @tree.command(name="open_store", description="Makes the server become a store that can do business with other servers", guild=noodle_server)
 @app_commands.checks.has_permissions(administrator=True)
