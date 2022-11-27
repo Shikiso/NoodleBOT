@@ -3,15 +3,16 @@ from os import getenv
 from random import choice
 import discord
 from discord import app_commands
-from discord.ext import commands
 from discord.ui import View
 from dotenv import load_dotenv
 
 import bin.config  # sets up database and other functionality
 from bin.Embed_Handler import embed
 from bin.needed_vars import *
-from bin.quick_access import Items, Items_IDs, Users, jsonStores, update_item_amount_existing, reload_data
-from Members.load_members import start
+from bin.quick_access import Items, Items_IDs, Users, jsonStores, update_item_amount_existing, reload_data, Stores
+from Members.load_members import start as MStart
+from Stores.load_stores import start as SStart
+from Stores.Store import check_store_exists, create_new_store
 
 intents_varaible = discord.Intents.all()
 noodle_server = discord.Object(id=992294737405026324)
@@ -28,7 +29,8 @@ class aclient(discord.Client):
             await tree.sync(guild=noodle_server)
             self.synced = True
 
-        start(self)
+        MStart(self)
+        SStart()
         log.info("[+] NoodleBOT is ready!")
     
 load_dotenv()
@@ -269,19 +271,15 @@ async def self(interaction: discord.Interaction):
 @app_commands.checks.has_permissions(administrator=True)
 async def self(interaction: discord.Interaction, name: str = None):
     user = interaction.user
-    if interaction.guild.id not in jsonStores.data:
+    if not check_store_exists(storeID=interaction.guild.id, storeName=name):
         if not name:
             name = interaction.guild.name
-        jsonStores.add_data(interaction.guild.id, {
-                                                    'name':name,
-                                                    'items':{},
-                                                    'sales':0,
-                                                    'worth':0
-                                                    })
+        create_new_store(interaction.guild.id, name)
+
         log.info(f"[STORES] New store opened by {user} : {name} : {interaction.guild.id}")
         e = embed(title="Store", description=f"You have open a store!").get_embed()
     else:
-        e = embed(title="Store", description=f"You have already opened a store!").get_embed()
+        e = embed(title="Store", description=f"You have either already opened a store or your name has been used already!").get_embed()
 
     await interaction.response.send_message(embed=e)
 
@@ -341,6 +339,10 @@ async def self(interaction: discord.Interaction, name: str = None, item: str = N
     elif amount:
         e = embed(title=f"Stores", description=f"You need to specifiy an item as well!").get_embed()
     await interaction.response.send_message(embed=e)
+
+@tree.command(name="store_buy", description="buy item to sell through your store")
+async def self(interaction: discord.Integration):
+    pass
 
 @tree.command(name="test", description="testing command")
 async def self(interaction: discord.Interaction):
