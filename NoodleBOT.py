@@ -3,15 +3,16 @@ from os import getenv
 from random import choice
 import discord
 from discord import app_commands
-from discord.ext import commands
 from discord.ui import View
 from dotenv import load_dotenv
 
 import bin.config  # sets up database and other functionality
 from bin.Embed_Handler import embed
 from bin.needed_vars import *
-from bin.quick_access import Items, Items_IDs, Users, jsonStores, update_item_amount_existing, reload_data
-from Members.load_members import start
+from bin.quick_access import Items, Items_IDs, Users, jsonStores, update_item_amount_existing, reload_data, Stores
+from Members.load_members import start as MStart
+from Stores.load_stores import start as SStart
+from Stores.Store import check_store_exists, create_new_store
 
 intents_varaible = discord.Intents.all()
 noodle_server = discord.Object(id=992294737405026324)
@@ -28,7 +29,8 @@ class aclient(discord.Client):
             await tree.sync(guild=noodle_server)
             self.synced = True
 
-        start(self)
+        MStart(self)
+        SStart()
         log.info("[+] NoodleBOT is ready!")
     
 load_dotenv()
@@ -263,7 +265,6 @@ async def self(interaction: discord.Interaction):
     e = embed(title="Crime", description=f"Choose a criminal offence to make some money.").get_embed()
 
     await interaction.response.send_message(embed=e, view=view)
-
 
 # Stores
 @tree.command(name="open_store", description="Makes the server become a store that can do business with other servers", guild=noodle_server)
